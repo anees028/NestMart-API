@@ -11,10 +11,12 @@ export class CreateUserDto {
   @ApiProperty({ example: 'john@example.com' })
   email: string;
 
-  // @IsString()
-  // @MinLength(6, { message: 'Password is too weak' })
-  // password: string;
+  @IsString()
+  @MinLength(3, { message: 'Password is too weak' })
+  @ApiProperty({ example: 'min length 3 character' })
+  password: string;
 
   @IsString()
+  @ApiProperty({ example: 'admin' })
   role: string;
 }

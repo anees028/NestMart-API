@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { CreateUserDto } from './create-user.dto';
 
 @Controller('users') // 1. Defines the base route: /users
 export class UsersController {
@@ -15,9 +16,9 @@ export class UsersController {
     return this.usersService.findAll(); 
   }
 
-  @Post() // Handle POST /users
-  createUser(@Body() userData: { name: string; role: string }) {
-    // @Body() is the same as req.body in Express
-    return this.usersService.create(userData);
+  @Post()
+  // Replace the manual type with CreateUserDto
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 }

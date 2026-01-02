@@ -21,78 +21,129 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## Project: NestMart API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+NestMart is a small sample API built with NestJS to demonstrate a clean module structure, input validation, Swagger docs, and a minimal in-memory user store. This repository contains the initial implementation for managing users (list & create), basic app routes, and unit tests.
 
-## Project setup
+---
+
+## Features implemented ✅
+
+- Users module with two endpoints:
+  - GET /users — returns a list of users (in-memory)
+  - POST /users — create a new user using `CreateUserDto` and class-validator rules
+- Global validation using Nest's `ValidationPipe` with `whitelist` and `forbidNonWhitelisted` enabled (strips unexpected properties and rejects requests with extra props)
+- Swagger/OpenAPI documentation available at `/api` (configured in `src/main.ts`)
+- Simple in-memory "database" in `UsersService` (for demo and testing purposes)
+- Unit tests for `AppController` and a basic test scaffold for `UsersController`
+
+---
+
+## Quick start 🔧
+
+1. Install dependencies
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+2. Run in development (watch mode)
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
+# app runs at http://localhost:3000
+# swagger UI available at http://localhost:3000/api
 ```
 
-## Run tests
+3. Run tests
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# e2e tests (if added)
+npm run test:e2e
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## API examples
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- Get users:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+curl http://localhost:3000/users
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Create user (valid payload):
 
-## Resources
+```bash
+curl -X POST http://localhost:3000/users \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"John","email":"john@example.com","password":"secret123","role":"customer"}'
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Validation notes:
+- `name` must be a string with minimum length 2
+- `email` must be a valid email
+- `password` must be at least 6 characters
+- Extra properties will be stripped or rejected depending on the request due to global validation
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Project structure & file explanations 📁
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- `src/main.ts` — App bootstrap and global configuration
+  - Enables `ValidationPipe` (with `whitelist` and `forbidNonWhitelisted`)
+  - Configures Swagger (`/api`)
+  - Starts the app on port 3000
 
-## Stay in touch
+- `src/app.module.ts` — Root module that imports `UsersModule` and other application modules
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- `src/app.controller.ts` & `src/app.service.ts` — Example root endpoint that returns `Hello World!` (used by the unit test)
 
-## License
+- `src/users/users.module.ts` — Module that declares and wires `UsersController` and `UsersService`
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- `src/users/users.controller.ts` — Defines the HTTP endpoints for users (`GET /users`, `POST /users`). Uses `CreateUserDto` and Nest's decorators. Includes Swagger decorators for nice docs.
+
+- `src/users/users.service.ts` — Business logic and temporary in-memory user storage. Implements `findAll()` and `create()`.
+
+- `src/users/create-user.dto.ts` — DTO with `class-validator` decorators (`@IsString()`, `@IsEmail()`, `@MinLength()`), and `@ApiProperty()` for Swagger examples.
+
+- `src/*.spec.ts` — Unit tests (Jest). `AppController` has a test for `getHello()`. `UsersController` has a scaffold test to assert controller is defined.
+
+- `test/` — (e2e) test configuration files if you add integration tests later.
+
+---
+
+## Design decisions & notes 💡
+
+- Persistence: currently in-memory for simplicity. For production-like behavior, integrate a database (Postgres, MongoDB, etc.) and move persistence to a repository layer.
+- Passwords: currently stored as plain text in the in-memory store. Add password hashing (bcrypt) and remove plain-text storage before shipping.
+- Validation: global pipe enforces DTO constraints and removes unexpected properties; this improves security and reduces accidental behavior.
+- Swagger: helpful for manual testing and discovering endpoints. Keep DTO descriptions and `@ApiProperty()` metadata up to date.
+
+---
+
+## Next steps / suggestions ✨
+
+- Add database integration (TypeORM / Prisma) and migration scripts
+- Add authentication (JWT) and role-based guards
+- Expand tests (unit & e2e), including negative test cases for validation
+- Add CI configuration, linting, and prettier rules if desired
+
+---
+
+If you want, I can also:
+- Add example e2e tests for the user endpoints
+- Implement a simple persistence layer using SQLite or an in-memory database for tests
+- Add basic authentication flow (signup/login)
+
+Feel free to tell me which of the next steps you'd like me to implement next.
+
+---
+
+**License**: This project follows the same MIT licensing used by NestJS starter templates.
+
+**Author**: Anees ur Rehman
+

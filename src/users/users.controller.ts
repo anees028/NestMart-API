@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './create-user.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users') // 👈 Group in Swagger UI
 @Controller('users') // 1. Defines the base route: /users
 export class UsersController {
   
@@ -11,12 +13,16 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get() // Handle GET /users
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, description: 'List of users' })
   getAllUsers() {
     // The waiter delegates work to the chef
     return this.usersService.findAll(); 
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
   // Replace the manual type with CreateUserDto
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);

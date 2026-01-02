@@ -25,8 +25,8 @@ async function bootstrap() {
 
   // 4. Setup the route for the docs (e.g., /api)
   SwaggerModule.setup('api', app, document);
-
   await app.listen(3000);
+  console.log('Swagger docs available at http://localhost:3000/api');
 
 }
 bootstrap();

@@ -190,3 +190,100 @@ If you want, I can implement the missing pieces for you now:
 - Add tests for login flow
 
 Which of these would you like me to do next?
+
+---
+
+## Guards — The Bouncer at the Door (Simple English)
+
+You have the Wristband (Token). Now we need to put a Bouncer at the door of your API endpoints to check it.
+
+- **Guard = Bouncer**: The Guard stands at a route and says "Stop! Let me see your wristband and validate it before I let the request proceed." 
+- **Rulebook = Strategy**: This is the file that describes how to check the wristband (where to look for the token, how to validate it, what secret to use, whether to reject expired tokens).
+
+### Step 1 — Create the Strategy (the Rulebook)
+
+Create `src/auth/jwt.strategy.ts` that tells Passport how to validate tokens and what to attach to `req.user` when valid:
+
+```ts
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Look in Authorization header
+      ignoreExpiration: false, // Reject expired tokens
+      secretOrKey: process.env.JWT_SECRET || 'superSecretKey123', // Use env var in prod
+    });
+  }
+
+  async validate(payload: any) {
+    // This return value is attached to req.user
+    return { userId: payload.sub, username: payload.username, role: payload.role };
+  }
+}
+```
+
+### Step 2 — Register the Strategy
+
+Tell `AuthModule` about the strategy so Nest can initialize it:
+
+```ts
+import { JwtStrategy } from './jwt.strategy';
+
+@Module({
+  imports: [/* UsersModule, JwtModule */],
+  providers: [AuthService, JwtStrategy], // register here
+  controllers: [AuthController],
+})
+export class AuthModule {}
+```
+
+### Step 3 — Add the Guard to a Route (the Bouncer is present)
+
+Use the guard on a route with `@UseGuards(AuthGuard('jwt'))`.
+
+Example: `GET /users/profile` in `src/users/users.controller.ts`:
+
+```ts
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Controller('users')
+export class UsersController {
+  // ... existing endpoints ...
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('profile')
+  getProfile(@Request() req) {
+    // req.user exists because JwtStrategy validated the token
+    return req.user;
+  }
+}
+```
+
+### Step 4 — Test the Bouncer
+
+- Without a token: `GET /users/profile` → 401 Unauthorized (the Bouncer stops the request).
+- With a token (use `Authorization: Bearer <token>`): the route returns `req.user` (data from the token).
+
+Example cURL:
+
+```bash
+curl http://localhost:3000/users/profile \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### Why this is efficient
+
+Because the token already contains the necessary claims (user id, email, role), the protected endpoint can often avoid a database lookup and use `req.user` directly. This reduces latency and load on your database for simple checks.
+
+### Bonus: Role-based Guard (Challenge)
+
+If you need only admins to access a route, create a custom guard that checks `req.user.role === 'admin'` and returns `true` only for allowed roles. This is like giving the bouncer a small rulebook with role checks.
+
+---
+
+If you'd like, I can implement the `JwtStrategy`, add the guard-protected `/users/profile` endpoint, and write a small test (401 without token, 200 with token). Tell me which of those you'd like me to implement next.

@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { Exclude } from 'class-transformer';
 
 @Entity() // 1. Tells TypeORM this class represents a SQL table
 export class User {
@@ -10,10 +12,20 @@ export class User {
 
   @Column({ unique: true }) // 4. Emails must be unique
   email: string;
+  
+  @Column()
+  @Exclude() // This tells the serializer: "Never include this field in the JSON response"
+  password: string; // The hashed password will be stored here
 
   @Column()
   role: string;
-  
-  // Note: In a real app, we would store a 'password' column too, 
-  // but we'll keep it simple for this step.
+
+  // AUTOMATION MAGIC:
+  // TypeORM has "Listeners". This function runs automatically 
+  // BEFORE the user is saved to the database.
+  @BeforeInsert()
+  async hashPassword() {
+    // 10 is the "Salt Rounds" (Complexity cost). Higher = slower but safer.
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }

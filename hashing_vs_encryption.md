@@ -80,3 +80,104 @@ If you'd like, I can:
 - Re-enable the `password` field in `CreateUserDto` and add tests for signup/login flows.
 
 Tell me which step you'd like me to take next.
+
+
+
+---
+
+## Interview topic: Interceptors & `ClassSerializerInterceptor` — The "Quality Control" inspector
+
+Interceptors sit between your Controller and the Client. They can run after a handler returns data but before the response is serialized and sent — which makes them perfect for consistent response shaping and cross-cutting concerns.
+
+### The Concept: The "Quality Control" Inspector
+
+- **Middleware** (Express-style) runs before the request hits the controller.
+- **Interceptors** can run *after* the handler returns — they are like a Quality Control inspector at the end of the factory line.
+
+Example: The controller produces a `User` entity that includes a `password` field. The `ClassSerializerInterceptor` inspects the outgoing object, respects `class-transformer` decorators like `@Exclude()`, and removes sensitive fields (e.g., `password`) before the JSON is sent to the client.
+
+### Step 1: Update the `User` entity
+
+Mark sensitive fields with `@Exclude()` from `class-transformer` and optionally hash the password before insert:
+
+```ts
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { Exclude } from 'class-transformer';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  @Exclude() // NEVER include in serialized responses
+  password: string;
+
+  @Column()
+  role: string;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+}
+```
+
+### Step 2: Activate the interceptor (globally recommended)
+
+Open `src/main.ts` and add the `ClassSerializerInterceptor` globally. The interceptor uses `Reflector` to read `class-transformer` metadata:
+
+```ts
+import { NestFactory, Reflector } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
+
+  // Activate serializer globally — ensures @Exclude is respected everywhere
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  // ... Swagger and other setup ...
+
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+Optionally, you can apply the interceptor per-controller instead of globally if you only want the behavior in a limited scope.
+
+### Step 3: Verification
+
+- Restart the server.
+- Use Swagger or `curl` to call `GET /users`.
+- The returned JSON should NOT contain `password`:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@test.com",
+    "role": "User"
+  }
+]
+```
+
+> The password still exists in the DB (so authentication works), but it never leaves the API surface.
+
+### Interview Knowledge: Why use `ClassSerializerInterceptor`?
+
+- **Consistency**: It prevents accidentally leaking sensitive fields in any route that returns the entity. Manually deleting properties in services is error-prone and easy to forget.
+- **Immutability**: Serializers produce a derived view for responses instead of mutating the entity instance, avoiding side effects.
+
+Use this explanation to show you understand cross-cutting concerns, consistent response shaping, and secure defaults in NestJS.

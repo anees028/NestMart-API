@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
+import { Product } from './products/entities/product.entity';
 
 @Module({
   imports: [
@@ -15,11 +17,12 @@ import { AuthModule } from './auth/auth.module';
       username: 'nest_user',      // Must match docker-compose
       password: 'nest',  // Must match docker-compose
       database: 'nestmart_db',    // Must match docker-compose
-      entities: [User],               // We will add our User entity here soon
+      entities: [User, Product],               // Add all the entities here...
       synchronize: true,          // CRITICAL: Auto-creates tables. Set to FALSE in production!
     }),
     UsersModule,
-    AuthModule],
+    AuthModule,
+    ProductsModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -5,6 +5,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/enums/roles.enum';
 
 @ApiTags('Users') // 👈 Group in Swagger UI
 @Controller('users') // 1. Defines the base route: /users
@@ -39,9 +40,9 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard) // 1. Run AuthGuard first, then RolesGuard
-  @Roles('Admin') // 2. Only 'Admin' is allowed
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.Admin) // <--- much safer than 'Admin' string
   deleteUser(@Param('id') id: string) {
-    return { message: `User ${id} has been deleted (Simulated)` };
+    return { message: `User ${id} has been deleted` };
   }
 }

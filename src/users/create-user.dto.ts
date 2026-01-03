@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsInt, MinLength, IsEmail } from 'class-validator';
+import { IsString, MinLength, IsEmail, IsEnum } from 'class-validator';
+import { Role } from 'src/enums/roles.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -16,7 +17,7 @@ export class CreateUserDto {
   @ApiProperty({ example: 'min length 3 character' })
   password: string;
 
-  @IsString()
-  @ApiProperty({ example: 'admin' })
-  role: string;
+  @ApiProperty({ enum: Role, example: Role.User }) // Updates Swagger to show dropdown!
+  @IsEnum(Role, { message: 'Valid roles are User, Admin, or Manager' }) // Validates input
+  role: Role;
 }

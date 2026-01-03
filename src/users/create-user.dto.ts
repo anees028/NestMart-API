@@ -9,12 +9,12 @@ export class CreateUserDto {
   name: string;
   
   @IsEmail()
-  @ApiProperty({ example: 'john@example.com' })
+  @ApiProperty({ example: 'john@gmail.com' })
   email: string;
 
   @IsString()
   @MinLength(3, { message: 'Password is too weak' })
-  @ApiProperty({ example: 'min length 3 character' })
+  @ApiProperty({ example: 'john123' })
   password: string;
 
   @ApiProperty({ enum: Role, example: Role.User }) // Updates Swagger to show dropdown!

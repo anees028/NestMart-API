@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
+import { Role } from 'src/enums/roles.enum';
 
 @Entity() // 1. Tells TypeORM this class represents a SQL table
 export class User {
@@ -17,8 +18,12 @@ export class User {
   @Exclude() // This tells the serializer: "Never include this field in the JSON response"
   password: string; // The hashed password will be stored here
 
-  @Column()
-  role: string;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.User, // Default to 'User' if not specified
+  })
+  role: Role; // 2. Change type from 'string' to 'Role'
 
   // AUTOMATION MAGIC:
   // TypeORM has "Listeners". This function runs automatically 

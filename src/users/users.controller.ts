@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request, Delete, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/enums/roles.enum';
 
 @ApiTags('Users') // 👈 Group in Swagger UI
 @Controller('users') // 1. Defines the base route: /users
@@ -34,5 +37,12 @@ export class UsersController {
   getProfile(@Request() req) {
     // 3. Because the Strategy worked, req.user now exists!
     return req.user;
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.Admin) // <--- much safer than 'Admin' string
+  deleteUser(@Param('id') id: string) {
+    return { message: `User ${id} has been deleted` };
   }
 }

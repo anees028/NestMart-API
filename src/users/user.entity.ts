@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Exclude } from 'class-transformer';
 
 @Entity() // 1. Tells TypeORM this class represents a SQL table
 export class User {
@@ -13,6 +14,7 @@ export class User {
   email: string;
   
   @Column()
+  @Exclude() // This tells the serializer: "Never include this field in the JSON response"
   password: string; // The hashed password will be stored here
 
   @Column()

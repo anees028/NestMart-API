@@ -16,6 +16,11 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  // Find one user by email
+  findOneByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
   // Create and Save to DB
   async create(createUserDto: CreateUserDto): Promise<User> {
     // 1. Create the entity instance

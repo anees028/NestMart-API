@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Users') // 👈 Group in Swagger UI
 @Controller('users') // 1. Defines the base route: /users
@@ -26,5 +27,12 @@ export class UsersController {
   // Replace the manual type with CreateUserDto
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @UseGuards(AuthGuard('jwt')) // 2. THE BOUNCER IS HERE
+  @Get('profile')
+  getProfile(@Request() req) {
+    // 3. Because the Strategy worked, req.user now exists!
+    return req.user;
   }
 }

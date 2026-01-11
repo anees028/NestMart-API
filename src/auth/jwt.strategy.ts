@@ -24,6 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     // Whatever we return here gets attached to 'req.user'
     // Now, every protected route will know WHO the user is!
-    return { userId: payload.sub, username: payload.username, role: payload.role };
+    return { id: payload.sub, username: payload.username, role: payload.role };
   }
 }

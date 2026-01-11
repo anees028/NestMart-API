@@ -5,9 +5,17 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
+import { Product } from './products/entities/product.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigService available everywhere
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -15,11 +23,14 @@ import { AuthModule } from './auth/auth.module';
       username: 'nest_user',      // Must match docker-compose
       password: 'nest',  // Must match docker-compose
       database: 'nestmart_db',    // Must match docker-compose
-      entities: [User],               // We will add our User entity here soon
+      entities: [User, Product, Order],               // Add all the entities here...
       synchronize: true,          // CRITICAL: Auto-creates tables. Set to FALSE in production!
+      autoLoadEntities: true,
     }),
     UsersModule,
-    AuthModule],
+    AuthModule,
+    ProductsModule,
+    OrdersModule],
   controllers: [AppController],
   providers: [AppService],
 })

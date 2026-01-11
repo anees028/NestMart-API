@@ -185,6 +185,18 @@ docker --version
 docker-compose --version
 ```
 
+### D. Interview Question: "How do you update the app?"
+
+If you change code, you repeat the process:
+
+```
+git pull
+
+docker-compose up -d --build
+```
+
+Docker is smart; it only rebuilds the layers that changed.
+
 ---
 
 ## 3. Deployment

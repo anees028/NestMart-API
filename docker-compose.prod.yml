@@ -9,9 +9,9 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USERNAME=nest_user
-      - DB_PASSWORD=secure_production_password
+      - DB_PASSWORD=nest
       - DB_NAME=nestmart_db
-      - JWT_SECRET=complex_long_random_string_here_12345
+      - JWT_SECRET=you_are_my_pinki
     depends_on:
       - db
     restart: always
@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: nest_user
-      POSTGRES_PASSWORD: secure_production_password
+      POSTGRES_PASSWORD: nest
       POSTGRES_DB: nestmart_db
     volumes:
       - postgres_data:/var/lib/postgresql/data # Persist data if container restarts

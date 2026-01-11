@@ -18,6 +18,9 @@ export class Product {
   // RELATIONSHIP: Many Products -> One User
   // The first function returns the Target Entity (User)
   // The second function describes the inverse side (we'll add this to User next)
-  @ManyToOne(() => User, (user) => user.products, { eager: true }) 
+  @ManyToOne(() => User, (user) => user.products, { eager: true })
   creator: User;
+
+  @Column({ default: 10 })
+  stock: number;
 }

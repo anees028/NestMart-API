@@ -7,6 +7,8 @@ import { User } from './users/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { Product } from './products/entities/product.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
 
 @Module({
   imports: [
@@ -17,12 +19,14 @@ import { Product } from './products/entities/product.entity';
       username: 'nest_user',      // Must match docker-compose
       password: 'nest',  // Must match docker-compose
       database: 'nestmart_db',    // Must match docker-compose
-      entities: [User, Product],               // Add all the entities here...
+      entities: [User, Product, Order],               // Add all the entities here...
       synchronize: true,          // CRITICAL: Auto-creates tables. Set to FALSE in production!
+      autoLoadEntities: true,
     }),
     UsersModule,
     AuthModule,
-    ProductsModule],
+    ProductsModule,
+    OrdersModule],
   controllers: [AppController],
   providers: [AppService],
 })

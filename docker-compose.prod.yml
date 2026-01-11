@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build: . # Build the Dockerfile we just made
+    ports:
+      - "80:3000" # Map Server Port 80 (HTTP) to Container Port 3000
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=nest_user
+      - DB_PASSWORD=secure_production_password
+      - DB_NAME=nestmart_db
+      - JWT_SECRET=complex_long_random_string_here_12345
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: nest_user
+      POSTGRES_PASSWORD: secure_production_password
+      POSTGRES_DB: nestmart_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data if container restarts
+
+volumes:
+  postgres_data:

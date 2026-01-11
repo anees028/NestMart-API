@@ -9,9 +9,13 @@ import { ProductsModule } from './products/products.module';
 import { Product } from './products/entities/product.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigService available everywhere
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

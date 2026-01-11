@@ -78,7 +78,7 @@ import { User } from './users/user.entity';
       host: 'localhost',
       port: 5432,
       username: 'nest_user',
-      password: 'nest_password',
+      password: 'nest',
       database: 'nestmart_db',
       entities: [User],
       synchronize: true, // AUTO-CREATE TABLES — set to FALSE in production!

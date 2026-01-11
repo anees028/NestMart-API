@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { Role } from 'src/enums/roles.enum';
 import { Product } from 'src/products/entities/product.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Entity() // 1. Tells TypeORM this class represents a SQL table
 export class User {
@@ -39,4 +40,7 @@ export class User {
   // This does NOT create a column in the user table. It's virtual.
   @OneToMany(() => Product, (product) => product.creator)
   products: Product[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

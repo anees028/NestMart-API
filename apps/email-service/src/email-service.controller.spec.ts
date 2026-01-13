@@ -16,7 +16,7 @@ describe('EmailServiceController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(emailServiceController.getHello()).toBe('Hello World!');
+      expect(emailServiceController.handleOrderCreated).toBe('Hello World!');
     });
   });
 });

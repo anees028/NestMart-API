@@ -1,9 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/enums/roles.enum';
-import { Product } from 'src/products/entities/product.entity';
-import { Order } from 'src/orders/entities/order.entity';
+import { Order } from '../orders/entities/order.entity';
+import { Product } from '../products/entities/product.entity';
+import { Role } from '../enums/roles.enum';
 
 @Entity() // 1. Tells TypeORM this class represents a SQL table
 export class User {

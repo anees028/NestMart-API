@@ -10,8 +10,10 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule, // We need to check users from the database
     JwtModule.register({
       global: true, // Makes the JWT service available everywhere
-      secret: 'you_are_my_pinki', // IN PRODUCTION: Use process.env.JWT_SECRET
-      signOptions: { expiresIn: '60m' }, // Token expires in 1 hour
+      secret: process.env.JWT_SECRET, // IN PRODUCTION: Use process.env.JWT_SECRET
+       signOptions: { 
+        expiresIn: parseInt(process.env.JWT_EXPIRATION as string) || '60m',// Token expires in 1 hour
+      }, 
     }),
   ],
   providers: [AuthService, JwtStrategy],

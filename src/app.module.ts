@@ -17,15 +17,15 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true, // Makes ConfigService available everywhere
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'nest_user',      // Must match docker-compose
-      password: 'nest',  // Must match docker-compose
-      database: 'nestmart_db',    // Must match docker-compose
+      type: process.env.DB_TYPE as 'postgres',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT as string, 10) || 5432,
+      username: process.env.DB_USERNAME,  
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: [User, Product, Order],               // Add all the entities here...
-      synchronize: true,          // CRITICAL: Auto-creates tables. Set to FALSE in production!
-      autoLoadEntities: true,
+      synchronize: process.env.DB_SYNCHRONIZE === 'true',          // CRITICAL: Auto-creates tables. Set to FALSE in production!
+      autoLoadEntities: process.env.DB_AUTO_LOAD_ENTITIES === 'true',
     }),
     UsersModule,
     AuthModule,

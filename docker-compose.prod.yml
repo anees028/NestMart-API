@@ -7,11 +7,11 @@ services:
       - "80:3000" # Map Server Port 80 (HTTP) to Container Port 3000
     environment:
       - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USERNAME=nest_user
-      - DB_PASSWORD=nest
-      - DB_NAME=nestmart_db
-      - JWT_SECRET=you_are_my_pinki
+      - DB_PORT=${DB_PORT}              # ✅ From .env
+      - DB_USERNAME=${DB_USERNAME}      # ✅ From .env
+      - DB_PASSWORD=${DB_PASSWORD}      # ✅ From .env
+      - DB_NAME=${DB_NAME}              # ✅ From .env
+      - JWT_SECRET=${JWT_SECRET}        # ✅ From .env
     depends_on:
       - db
     restart: always
@@ -20,11 +20,11 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: nest_user
-      POSTGRES_PASSWORD: nest
-      POSTGRES_DB: nestmart_db
+      POSTGRES_USER: ${DB_USERNAME}     # ✅ From .env
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # ✅ From .env
+      POSTGRES_DB: ${DB_NAME}           # ✅ From .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Persist data if container restarts
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+
   constructor() {
     super({
       // 1. Where do we get the token from?
@@ -15,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       
       // 3. The Secret Key (Must match what we used in AuthModule)
       // In production, use process.env.JWT_SECRET
-      secretOrKey: 'you_are_my_pinki', // it is same as in auth.module.ts
+      secretOrKey: process.env.JWT_SECRET || 'you_are_my_pinki', // it is same as in auth.module.ts
     });
   }
 

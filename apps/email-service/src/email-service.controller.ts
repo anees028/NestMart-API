@@ -1,17 +1,31 @@
 import { Controller } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
+import { MailerService } from '@nestjs-modules/mailer'; // Import this
 
 @Controller()
 export class EmailServiceController {
   
-  // "order_created" is the TOPIC name we will listen to
+  constructor(private readonly mailerService: MailerService) {} // Inject it
+
   @EventPattern('order_created')
-  handleOrderCreated(@Payload() data: any) {
-    // In real life, you would use a library like 'nodemailer' here
-    console.log('------------------------------------------------');
-    console.log('📧 EMAIL SERVICE: Received Order Event!');
-    console.log(`To: ${data.userEmail}`);
-    console.log(`Subject: Order #${data.orderId} Confirmed`);
-    console.log('------------------------------------------------');
+  async handleOrderCreated(@Payload() data: any) {
+    console.log('📨 Received Order Event. Sending Email...');
+
+    try {
+      await this.mailerService.sendMail({
+        to: data.userEmail,
+        // from: defaults are used
+        subject: `Order #${data.orderId} Confirmed!`,
+        template: 'order-confirmation', // The name of your .hbs file
+        context: { // Data to be sent to the template file
+          name: data.userName,
+          orderId: data.orderId,
+          totalPrice: Number.parseInt(data.totalPrice),
+        },
+      });
+      console.log('✅ Email sent successfully!');
+    } catch (error) {
+      console.error('❌ Error sending email:', error);
+    }
   }
 }

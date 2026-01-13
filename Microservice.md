@@ -106,14 +106,14 @@ docker compose up -d
 - Start the API (development):
 
 ```bash
-npm run start:nest-mart:dev
+npm run start:dev nest-mart-api
 # or -> npm run start:nest-mart:debug  (for debug)
 ```
 
 - Start the email microservice (dev or debug):
 
 ```bash
-npm run start:email:dev
+npm run start:dev email-service # dev
 npm run start:email:debug
 ```
 

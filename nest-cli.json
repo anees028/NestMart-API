@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/nest-mart_api",
   "projects": {
+    "email-service": {
+      "type": "application",
+      "root": "apps/email-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/email-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/email-service/tsconfig.app.json"
+      }
+    },
     "nest-mart_api": {
       "type": "application",
       "root": "apps/nest-mart_api",

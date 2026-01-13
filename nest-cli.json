@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/nest-mart_api/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/nest-mart_api/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/nest-mart_api",
+  "projects": {
+    "nest-mart_api": {
+      "type": "application",
+      "root": "apps/nest-mart_api",
+      "entryFile": "main",
+      "sourceRoot": "apps/nest-mart_api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/nest-mart_api/tsconfig.app.json"
+      }
+    },
+    "orders-worker": {
+      "type": "application",
+      "root": "apps/orders-worker",
+      "entryFile": "main",
+      "sourceRoot": "apps/orders-worker/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/orders-worker/tsconfig.app.json"
+      }
+    }
   }
 }

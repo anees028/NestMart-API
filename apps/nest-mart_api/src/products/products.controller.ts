@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common'
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { Role } from 'src/enums/roles.enum';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../enums/roles.enum';
 
 @Controller('products')
 export class ProductsController {

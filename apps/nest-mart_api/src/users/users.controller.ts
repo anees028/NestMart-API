@@ -3,9 +3,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './create-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { Role } from 'src/enums/roles.enum';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../enums/roles.enum';
 
 @ApiTags('Users') // 👈 Group in Swagger UI
 @Controller('users') // 1. Defines the base route: /users

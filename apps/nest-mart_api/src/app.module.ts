@@ -10,7 +10,6 @@ import { Product } from './products/entities/product.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -28,20 +27,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       synchronize: true,          // CRITICAL: Auto-creates tables. Set to FALSE in production!
       autoLoadEntities: true,
     }),
-    ClientsModule.register([
-      {
-        name: 'KAFKA_SERVICE', // We will inject this name later
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'api-gateway-consumer',
-          },
-        },
-      },
-    ]),
     UsersModule,
     AuthModule,
     ProductsModule,

@@ -108,7 +108,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(pass, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, username: user.email, role: user.role };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 }
@@ -221,7 +221,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     // This return value is attached to req.user
-    return { userId: payload.sub, username: payload.username, role: payload.role };
+    return { userId: payload.sub, email: payload.email, role: payload.role };
   }
 }
 ```

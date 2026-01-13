@@ -25,6 +25,7 @@ export class OrdersService {
   async create(createOrderDto: CreateOrderDto, user: User) {
     // initialize a query runner for transaction query management
     const queryRunner = this.dataSource.createQueryRunner();
+    let orderPrice = 0;
 
     // 1. Connect to the DB
     await queryRunner.connect();
@@ -39,6 +40,11 @@ export class OrdersService {
         id: In(createOrderDto.productIds),
       });
 
+      const users = await queryRunner.manager.findOneBy(User, { id: user.id });
+      if (!users) {
+        throw new BadRequestException('User not found');
+      }
+
       if (products.length !== createOrderDto.productIds.length) {
         throw new BadRequestException('Some products were not found');
       }
@@ -50,6 +56,7 @@ export class OrdersService {
             `Product ${product.title} is out of stock!`,
           );
         }
+        orderPrice = orderPrice + product.price;
         // Reduce stock
         product.stock--;
         // Save the updated product using the Transaction Manager
@@ -75,8 +82,9 @@ export class OrdersService {
       // We don't wait for this. We just throw it into Kafka and return.
       const eventData = {
         orderId: savedOrder.id,
+        userName: users.name,
         userEmail: user.email,
-        totalPrice: savedOrder.id * 100, // Id is multiplied by 100 just for demo purposes
+        totalPrice: orderPrice, // Use the calculated order price
       };
 
       this.kafkaClient.emit('order_created', eventData);

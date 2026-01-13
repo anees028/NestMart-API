@@ -3,8 +3,10 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/nest-mart_api/src",
   "compilerOptions": {
+    "assets": ["**/*.hbs"],
     "deleteOutDir": true,
     "webpack": true,
+    "watchAssets": true,
     "tsConfigPath": "apps/nest-mart_api/tsconfig.app.json"
   },
   "monorepo": true,
@@ -26,15 +28,6 @@
       "sourceRoot": "apps/nest-mart_api/src",
       "compilerOptions": {
         "tsConfigPath": "apps/nest-mart_api/tsconfig.app.json"
-      }
-    },
-    "orders-worker": {
-      "type": "application",
-      "root": "apps/orders-worker",
-      "entryFile": "main",
-      "sourceRoot": "apps/orders-worker/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/orders-worker/tsconfig.app.json"
       }
     }
   }
